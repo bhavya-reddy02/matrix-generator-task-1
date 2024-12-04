@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix with Neighbors</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            text-align: center;
+            width: 80%;
+            max-width: 900px;
+        }
+
+        table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+
+        td, input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .highlight {
+            background-color: yellow;
+        }
+
+        label {
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .matrix-container {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1> highest value of Matrix with Neighbours</h1>
+    
+    <!-- Input fields for rows and columns -->
+    <label for="rows">Rows: </label>
+    <input type="number" id="rows" value="" min="1" max="100" />
+    <label for="columns">Columns: </label>
+    <input type="number" id="columns" value="" min="1" max="100" />
+    <button onclick="generateMatrixInput()">Generate Matrix Input</button>
+
+    <!-- Placeholder for matrix input table -->
+    <div id="matrixInputContainer"></div>
+
+    <!-- Button to process matrix and find the highest value and neighbors -->
+    <button onclick="processMatrix()">Find Highest Value</button>
+
+    <!-- Matrix output -->
+    <div class="matrix-container" id="matrixContainer"></div>
+
+    <!-- Display results -->
+    <div id="result" class="result"></div>
+</div>
+
+<script>
+    // Function to generate matrix input based on user-specified rows and columns
+    function generateMatrixInput() {
+        const rows = parseInt(document.getElementById('rows').value);
+        const columns = parseInt(document.getElementById('columns').value);
+
+        let matrixInputHTML = "<table>";
+        for (let i = 0; i < rows; i++) {
+            matrixInputHTML += "<tr>";
+            for (let j = 0; j < columns; j++) {
+                matrixInputHTML += `<td><input type="number" id="cell-${i}-${j}" placeholder="Enter value" /></td>`;
+            }
+            matrixInputHTML += "</tr>";
+        }
+        matrixInputHTML += "</table>";
+
+        // Display the generated matrix input table
+        document.getElementById('matrixInputContainer').innerHTML = matrixInputHTML;
+        document.getElementById('matrixContainer').innerHTML = '';  // Clear previous matrix display
+        document.getElementById('result').innerHTML = ''; // Clear previous results
+    }
+
+    // Function to process matrix and find the highest value and its neighbors
+    function processMatrix() {
+        const rows = parseInt(document.getElementById('rows').value);
+        const columns = parseInt(document.getElementById('columns').value);
+
+        // Create an empty matrix to store user inputs
+        const matrix = [];
+        for (let i = 0; i < rows; i++) {
+            matrix[i] = [];
+            for (let j = 0; j < columns; j++) {
+                const cellValue = parseInt(document.getElementById(`cell-${i}-${j}`).value);
+                matrix[i][j] = isNaN(cellValue) ? 0 : cellValue; // Default to 0 if no input is provided
+            }
+        }
+
+        // Display the matrix
+        displayMatrix(matrix);
+
+        // Find the highest value and its neighbors
+        findMaxAndNeighbors(matrix);
+    }
+
+    // Function to display the matrix on the webpage
+    function displayMatrix(matrix) {
+        let matrixHTML = "<table>";
+        for (let i = 0; i < matrix.length; i++) {
+            matrixHTML += "<tr>";
+            for (let j = 0; j < matrix[i].length; j++) {
+                matrixHTML += `<td>${matrix[i][j]}</td>`;
+            }
+            matrixHTML += "</tr>";
+        }
+        matrixHTML += "</table>";
+        document.getElementById('matrixContainer').innerHTML = matrixHTML;
+    }
+
+    // Function to find the highest value and its left and right neighbors
+    function findMaxAndNeighbors(matrix) {
+        let maxVal = -Infinity;
+        let maxRow = -1;
+        let maxCol = -1;
+
+        // Find the maximum value in the matrix
+        for (let i = 0; i < matrix.length; i++) {
+            for (let j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] > maxVal) {
+                    maxVal = matrix[i][j];
+                    maxRow = i;
+                    maxCol = j;
+                }
+            }
+        }
+
+        // Find neighbors
+        let leftNeighbor = (maxCol > 0) ? matrix[maxRow][maxCol - 1] : "N/A";
+        let rightNeighbor = (maxCol < matrix[maxRow].length - 1) ? matrix[maxRow][maxCol + 1] : "N/A";
+
+        // Highlight the max value in the table
+        highlightMaxValue(maxRow, maxCol);
+
+        // Display the result
+        document.getElementById('result').innerHTML = `Max Value: ${maxVal}<br>Left Neighbor: ${leftNeighbor}<br>Right Neighbor: ${rightNeighbor}`;
+    }
+
+    // Function to highlight the maximum value in the table
+    function highlightMaxValue(row, col) {
+        const table = document.querySelector("table");
+        const rows = table.rows;
+        const cell = rows[row].cells[col];
+        cell.classList.add("highlight");
+    }
+</script>
+
+</body>
+</html>
+
+            
